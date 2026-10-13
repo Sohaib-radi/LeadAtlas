@@ -1,0 +1,10 @@
+{% extends "leads/base.html" %}
+{% block title %}Leads{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>All leads <span class="muted">({{ total }})</span></h1>
+  <a class="btn" href="{% url 'leads:export_csv' %}?{{ querystring }}">Export CSV</a>
+</div>
+{% include "leads/_filters.html" %}
+{% include "leads/_business_table.html" %}
+{% endblock %}

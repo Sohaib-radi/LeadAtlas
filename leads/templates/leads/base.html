@@ -1,0 +1,33 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}LeadAtlas{% endblock %} · LeadAtlas</title>
+  <link rel="stylesheet" href="{% static 'leads/style.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="{% url 'leads:home' %}">◎ LeadAtlas</a>
+      <nav>
+        <a href="{% url 'leads:home' %}">Search</a>
+        <a href="{% url 'leads:business_list' %}">Leads</a>
+        <a href="{% url 'leads:search_list' %}">History</a>
+        <a href="{% url 'admin:index' %}">Admin</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="container footer">
+    Business data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL).
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

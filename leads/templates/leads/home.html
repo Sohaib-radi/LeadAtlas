@@ -1,0 +1,48 @@
+{% extends "leads/base.html" %}
+{% block title %}Find businesses{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Find businesses by country, city &amp; sector</h1>
+  <p class="muted">Search OpenStreetMap for companies, save them as leads, track your outreach and export to CSV.</p>
+  <form method="post" class="search-form" id="search-form">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}<small class="error">{{ error }}</small>{% endfor %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary" id="search-btn">Search businesses</button>
+  </form>
+  <p class="muted small" id="search-wait" hidden>Searching… large cities can take up to a minute.</p>
+</section>
+
+<section class="stats">
+  <div class="stat"><span>{{ stats.businesses }}</span>Leads saved</div>
+  <div class="stat"><span>{{ stats.with_phone }}</span>With phone</div>
+  <div class="stat"><span>{{ stats.cities }}</span>Cities</div>
+  <div class="stat"><span>{{ stats.searches }}</span>Searches</div>
+</section>
+
+{% if recent_searches %}
+<section>
+  <h2>Recent searches</h2>
+  <ul class="cards">
+    {% for s in recent_searches %}
+      <li class="card"><a href="{{ s.get_absolute_url }}"><strong>{{ s.sector_label }}</strong><br>{{ s.city }}, {{ s.country }}{% if s.keyword %} · “{{ s.keyword }}”{% endif %}</a>
+        <div class="muted small">{{ s.result_count }} results · {{ s.created_at|timesince }} ago</div></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+  document.getElementById("search-form").addEventListener("submit", function () {
+    var btn = document.getElementById("search-btn");
+    btn.disabled = true; btn.textContent = "Searching…";
+    document.getElementById("search-wait").hidden = false;
+  });
+</script>
+{% endblock %}

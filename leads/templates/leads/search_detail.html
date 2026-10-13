@@ -1,0 +1,40 @@
+{% extends "leads/base.html" %}
+{% block title %}{{ search }}{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ search.sector_label }} in {{ search.city }}, {{ search.country }}</h1>
+    <p class="muted">{% if search.keyword %}Name contains “{{ search.keyword }}” · {% endif %}{{ search.result_count }} found · {{ search.created_at|date:"d M Y H:i" }} · showing {{ total }}</p>
+  </div>
+  <div class="actions">
+    <form method="post" action="{% url 'leads:search_rerun' search.pk %}">{% csrf_token %}<button class="btn btn-ghost">Refresh</button></form>
+    <a class="btn" href="{% url 'leads:export_csv' %}?search={{ search.pk }}&{{ querystring }}">Export CSV</a>
+  </div>
+</div>
+<div id="map"></div>
+{% with hide_location=True hide_sector=True %}{% include "leads/_filters.html" %}{% endwith %}
+{% include "leads/_business_table.html" %}
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  var points = [{% for b in page %}{% if b.latitude %}[{{ b.latitude|stringformat:"f" }}, {{ b.longitude|stringformat:"f" }}, "{{ b.name|escapejs }}", "{{ b.get_absolute_url }}"],{% endif %}{% endfor %}];
+  var mapEl = document.getElementById("map");
+  if (!points.length || typeof L === "undefined") { mapEl.hidden = true; } else {
+    var map = L.map(mapEl);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19, attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+    var bounds = [];
+    points.forEach(function (p) {
+      var link = document.createElement("a"); link.href = p[3]; link.textContent = p[2];
+      L.marker([p[0], p[1]]).addTo(map).bindPopup(link);
+      bounds.push([p[0], p[1]]);
+    });
+    map.fitBounds(bounds, { padding: [30, 30], maxZoom: 16 });
+  }
+</script>
+{% endblock %}

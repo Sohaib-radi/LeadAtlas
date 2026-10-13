@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: leadatlas
+    runtime: python
+    buildCommand: ./build.sh
+    startCommand: gunicorn config.wsgi --timeout 150
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.5
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://*.onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: leadatlas-db
+          property: connectionString
+
+databases:
+  - name: leadatlas-db
+    plan: free

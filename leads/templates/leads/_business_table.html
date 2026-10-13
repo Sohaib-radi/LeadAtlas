@@ -1,0 +1,30 @@
+<div class="table-wrap">
+<table class="table">
+  <thead>
+    <tr><th>Name</th><th>Category</th><th>City</th><th>Address</th><th>Phone</th><th>Website</th><th>Email</th><th>Status</th></tr>
+  </thead>
+  <tbody>
+  {% for b in page %}
+    <tr>
+      <td><a href="{{ b.get_absolute_url }}"><strong>{{ b.name }}</strong></a></td>
+      <td>{{ b.category|default:b.sector_label }}</td>
+      <td>{{ b.city }}</td>
+      <td>{{ b.address }} {{ b.postcode }}</td>
+      <td>{% if b.phone %}<a href="tel:{{ b.phone }}">{{ b.phone }}</a>{% else %}<span class="muted">—</span>{% endif %}</td>
+      <td>{% if b.website %}<a href="{{ b.website }}" target="_blank" rel="noopener">{{ b.website|cut:"https://"|cut:"http://"|truncatechars:30 }}</a>{% else %}<span class="muted">—</span>{% endif %}</td>
+      <td>{% if b.email %}<a href="mailto:{{ b.email }}">{{ b.email }}</a>{% else %}<span class="muted">—</span>{% endif %}</td>
+      <td><span class="badge badge-{{ b.status }}">{{ b.get_status_display }}</span></td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="8" class="muted center">No businesses match.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% if page.has_other_pages %}
+<nav class="pagination">
+  {% if page.has_previous %}<a class="btn btn-ghost" href="?{{ querystring }}&page={{ page.previous_page_number }}">← Prev</a>{% endif %}
+  <span>Page {{ page.number }} / {{ page.paginator.num_pages }}</span>
+  {% if page.has_next %}<a class="btn btn-ghost" href="?{{ querystring }}&page={{ page.next_page_number }}">Next →</a>{% endif %}
+</nav>
+{% endif %}

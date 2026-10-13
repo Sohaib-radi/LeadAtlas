@@ -1,0 +1,11 @@
+<form method="get" class="filters">
+  {{ form.q }}
+  {% if not hide_location %}{{ form.country }}{{ form.city }}{% endif %}
+  {% if not hide_sector %}{{ form.sector }}{% endif %}
+  {{ form.status }}
+  <label class="check">{{ form.has_phone }} Phone</label>
+  <label class="check">{{ form.has_website }} Website</label>
+  <label class="check">{{ form.has_email }} Email</label>
+  <button type="submit" class="btn">Filter</button>
+  <a class="btn btn-ghost" href="{{ request.path }}">Reset</a>
+</form>

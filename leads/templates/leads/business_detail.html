@@ -1,0 +1,36 @@
+{% extends "leads/base.html" %}
+{% block title %}{{ business.name }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ business.name }}</h1>
+    <p class="muted">{{ business.category|default:business.sector_label }} · {{ business.city }}, {{ business.country }}</p>
+  </div>
+  <span class="badge badge-{{ business.status }}">{{ business.get_status_display }}</span>
+</div>
+<div class="grid-2">
+  <section class="panel">
+    <h2>Details</h2>
+    <dl class="details">
+      <dt>Address</dt><dd>{{ business.address|default:"—" }} {{ business.postcode }}</dd>
+      <dt>Phone</dt><dd>{% if business.phone %}<a href="tel:{{ business.phone }}">{{ business.phone }}</a>{% else %}—{% endif %}</dd>
+      <dt>Email</dt><dd>{% if business.email %}<a href="mailto:{{ business.email }}">{{ business.email }}</a>{% else %}—{% endif %}</dd>
+      <dt>Website</dt><dd>{% if business.website %}<a href="{{ business.website }}" target="_blank" rel="noopener">{{ business.website }}</a>{% else %}—{% endif %}</dd>
+      <dt>Opening hours</dt><dd>{{ business.opening_hours|default:"—" }}</dd>
+      <dt>Map</dt><dd>{% if business.map_url %}<a href="{{ business.map_url }}" target="_blank" rel="noopener">View on OpenStreetMap</a>{% else %}—{% endif %}</dd>
+      <dt>Source</dt><dd><a href="https://www.openstreetmap.org/{{ business.external_id }}" target="_blank" rel="noopener">{{ business.external_id }}</a></dd>
+    </dl>
+  </section>
+  <section class="panel">
+    <h2>Track this lead</h2>
+    <form method="post" class="stack">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
+          {% for error in field.errors %}<small class="error">{{ error }}</small>{% endfor %}</div>
+      {% endfor %}
+      <button class="btn btn-primary">Save</button>
+    </form>
+  </section>
+</div>
+{% endblock %}
